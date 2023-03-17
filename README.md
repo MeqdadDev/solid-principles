@@ -1,2 +1,4 @@
-# solid-principles
-SOLID Principles
+# SOLID Principles
+
+## [SOLID Principles with Python examples](python)
+
