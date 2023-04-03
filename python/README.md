@@ -2,7 +2,7 @@
 
 Let's build a story! To see how to bring SOLID principles to life.
 
-### The beginning
+### The Beginning
 
 Meet Mohammad, a smart person who wants to build a robust payment system.
 
@@ -66,3 +66,14 @@ Verifying code: 123456789.
 ```
 
 Everything works fine and it's OK for now.
+
+-------
+
+### SOLID Principles
+
+After a while, Mohammad bought a book titled: `Clean Architecture` by Robert C. Martin.
+
+In this book, he read about SOLID principles, and he decided to SOLID-ify his program.
+
+### Single Responsibility Principle (SRP)
+
