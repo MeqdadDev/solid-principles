@@ -59,7 +59,7 @@ order.pay("debit", "123456789")
 
 The output was:
 
-```python
+```bash
 174
 Processing payment type...
 Verifying code: 123456789.
@@ -71,7 +71,7 @@ Everything works fine and it's OK for now.
 
 ### SOLID Principles
 
-For the purpose of our story, we will presume the presence of a consultant known as "**Uncle Clean**" who is tasked with providing Mohammad with advice and insights for the implementation of SOLID principles in his program.
+Let's assume that "**Uncle Clean**", a consultant, is helping Mohammad implement the SOLID principles in his program.
 
 **SOLID** stands for:
 - **S**: Single responsibility principle.
@@ -154,7 +154,7 @@ payment_handler.pay_credit(order, "543219876")
 
 Output:
 
-```python
+```bash
 174
 Processing Credit Card payment...
 Verifying code: 543219876.
@@ -255,8 +255,112 @@ paypal_payment.pay(order, "543219876")
 ```
 
 Output:
-```
+```bash
 200
 Processing PayPal payment...
 Verifying code: 543219876.
+```
+
+-------
+
+### Liskov Substitution Principle (LSP)
+
+Next day after adding PayPal payment integration, a customer called Mohammad and told him that there is a big issue in the system! Paying using PayPal method doesn't require security code! it requires email!
+
+Mohammad start thinking about changing the `security_code` to `email`, BUT... Changing this to `email` will create a new problem with other payment methods which require `security_code`.
+
+#### Uncle Clean in the Scene
+
+Uncle Clean: Hey Mohammad, I heard about your last problem, why you won't use Liskov?
+
+Mohammad: Hey Uncle, what you're talking about? Liskov???
+
+Uncle Clean:
+
+LSP is created by Prof. Barbara Liskov which stands for **Liskov Substitution Principle**, which states that objects of a superclass should be replaceable with objects of its subclasses without breaking the program's behavior.
+
+<p align="center">
+<img src="assets/lsp.jpg" width=40% height=30%>
+</p>
+
+The result of applying Liskov Substitution Principle on the codebase was:
+
+```python
+from abc import ABC, abstractmethod
+
+
+class Order:
+    items = []
+    quantities = []
+    prices = []
+    status = "open"
+
+    def add_item(self, name, quantity, price):
+        self.items.append(name)
+        self.quantities.append(quantity)
+        self.prices.append(price)
+
+    def total_price(self):
+        total = 0
+        for i in range(len(self.prices)):
+            total += self.quantities[i] * self.prices[i]
+        return total
+
+
+class PaymentHandler(ABC):
+    @abstractmethod
+    def pay(self, order: Order):
+        pass
+
+
+class DebitPaymentHandler(PaymentHandler):
+    def __init__(self, security_code):
+        self.security_code = security_code
+
+    def pay(self, order: Order):
+        print("Processing Debit Card payment...")
+        print(f"Verifying code: {self.security_code}.")
+        order.status = "paid"
+
+
+class CreditPaymentHandler(PaymentHandler):
+    def __init__(self, security_code):
+        self.security_code = security_code
+
+    def pay(self, order: Order):
+        print("Processing Credit Card payment...")
+        print(f"Verifying code: {self.security_code}.")
+        order.status = "paid"
+
+
+class PayPalPaymentHandler(PaymentHandler):
+    def __init__(self, email) -> None:
+        self.email = email
+
+    def pay(self, order: Order):
+        print("Processing PayPal payment...")
+        print(f"Verifying email: {self.email}.")
+        order.status = "paid"
+
+
+# Making orders
+order = Order()
+order.add_item("The Pragmatic Programmer Book, Andy Hunt", 1, 130)
+order.add_item("micro:bit Controller", 5, 14)
+
+print(order.total_price())
+
+
+# Payment using PayPal
+
+paypal_payment = PayPalPaymentHandler("hi@customer.com")
+paypal_payment.pay(order)
+```
+
+Output:
+
+```bash
+200
+Processing PayPal payment...
+Verifying email: hi@customer.com.
 ```
