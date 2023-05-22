@@ -364,3 +364,252 @@ Output:
 Processing PayPal payment...
 Verifying email: hi@customer.com.
 ```
+
+
+-------
+
+### Interface Segregation Principle (ISP)
+
+After a while, Mohammad contacted a cyber security expert to review the whole system and to submit a report that helps him to fix the vulnerabilities in the system for more protection.
+
+One of the main points that this cyber security expert mentioned in his report: Adding 2FA ( Two-factor Authentication) to the system.
+
+Based on that, Mohammad started to work on this feature by adding authentication method using SMS `auth_2fa_sms` in the `PaymentHandler`. And he implemented it to the other classes that are inheriting from the base class.
+
+The code became as the following:
+
+```python
+from abc import ABC, abstractmethod
+
+
+class Order:
+    items = []
+    quantities = []
+    prices = []
+    status = "open"
+
+    def add_item(self, name, quantity, price):
+        self.items.append(name)
+        self.quantities.append(quantity)
+        self.prices.append(price)
+
+    def total_price(self):
+        total = 0
+        for i in range(len(self.prices)):
+            total += self.quantities[i] * self.prices[i]
+        return total
+
+
+class PaymentHandler(ABC):
+    @abstractmethod
+    def auth_2fa_sms(self, code):
+        pass
+
+    @abstractmethod
+    def pay(self, order: Order):
+        pass
+
+
+class DebitPaymentHandler(PaymentHandler):
+    def __init__(self, security_code):
+        self.security_code = security_code
+        self.verified = False
+
+    def auth_2fa_sms(self, code):
+        print(f"Verifying 2FA using SMS code: {code}")
+        self.verified = True
+
+    def pay(self, order: Order):
+        if not self.verified:
+            raise Exception("Not authenticated")
+        print("Processing Debit Card payment...")
+        print(f"Verifying code: {self.security_code}.")
+        order.status = "paid"
+
+
+class CreditPaymentHandler(PaymentHandler):
+    def __init__(self, security_code):
+        self.security_code = security_code
+
+    def auth_2fa_sms(self, code):
+        # It is also a violation for Liskov Substitution principle
+        raise Exception(
+            "Credit card payment doesn't support SMS code authentication.")
+
+    def pay(self, order: Order):
+        print("Processing Credit Card payment...")
+        print(f"Verifying code: {self.security_code}.")
+        order.status = "paid"
+
+
+class PayPalPaymentHandler(PaymentHandler):
+    def __init__(self, email) -> None:
+        self.email = email
+
+    def auth_2fa_sms(self, code):
+        print(f"Verifying 2FA using SMS code: {code}")
+        self.verified = True
+
+    def pay(self, order: Order):
+        if not self.verified:
+            raise Exception("Not authenticated")
+        print("Processing PayPal payment...")
+        print(f"Verifying email: {self.email}.")
+        order.status = "paid"
+
+
+# Making orders
+order = Order()
+order.add_item("Head First Object Oriented Analysis and Design Book", 1, 76)
+order.add_item("Raspberry Pi Camera v2", 2, 40)
+
+print(order.total_price())
+
+
+# Payment using Debit Card
+
+debit_payment = DebitPaymentHandler("67891")
+debit_payment.auth_2fa_sms("54321")
+debit_payment.pay(order)
+```
+
+As in the above code, when the user pay for his stuff using debit card, it should be authenticated before payment process, and the expected result will be as the following:
+
+```bash
+156
+Verifying 2FA using SMS code: 54321
+Processing Debit Card payment...
+Verifying code: 67891.
+```
+<p align="center">
+<img src="assets/isp.jpg" width=40% height=30%>
+</p>
+
+#### Uncle Clean in the Scene
+
+Uncle Clean: Hello Abo Ehmaid (a nickname for Mohammad), I heard that you're securing your payment software, and that is a good news, but what will happen if the user start using credit card?
+
+Mohammad: Hi uncle, I know that credit card doesn't support 2FA using SMS verification, so I added an exception for this error. But I think it should be implemented in a better way. What do you advise me to do?
+
+Uncle Clean: I suggest on you to use interface segregation.
+
+Mohammad: ?????
+
+Uncle Clean: **Interface Segregation Principle (ISP)** means: Clients should not be forced to depend on interfaces they do not use (SMS 2FA with credit card in your case).
+
+Mohammad: I'll read about it and fix that.
+
+After reading using different resources about ISP, Mohammad ended up with this modification:
+
+```python
+from abc import ABC, abstractmethod
+
+
+class Order:
+    items = []
+    quantities = []
+    prices = []
+    status = "open"
+
+    def add_item(self, name, quantity, price):
+        self.items.append(name)
+        self.quantities.append(quantity)
+        self.prices.append(price)
+
+    def total_price(self):
+        total = 0
+        for i in range(len(self.prices)):
+            total += self.quantities[i] * self.prices[i]
+        return total
+
+
+class PaymentHandler(ABC):
+    @abstractmethod
+    def pay(self, order: Order):
+        pass
+
+
+class SMSPaymentAuthHandler(PaymentHandler):
+    @abstractmethod
+    def auth_2fa_sms(self, code):
+        pass
+
+
+class DebitPaymentHandler(SMSPaymentAuthHandler):
+    def __init__(self, security_code):
+        self.security_code = security_code
+        self.verified = False
+
+    def auth_2fa_sms(self, code):
+        print(f"Verifying 2FA using SMS code: {code}")
+        self.verified = True
+
+    def pay(self, order: Order):
+        if not self.verified:
+            raise Exception("Not authenticated")
+        print("Processing Debit Card payment...")
+        print(f"Verifying code: {self.security_code}.")
+        order.status = "paid"
+
+
+class CreditPaymentHandler(PaymentHandler):
+    def __init__(self, security_code):
+        self.security_code = security_code
+
+    def pay(self, order: Order):
+        print("Processing Credit Card payment...")
+        print(f"Verifying code: {self.security_code}.")
+        order.status = "paid"
+
+
+class PayPalPaymentHandler(SMSPaymentAuthHandler):
+    def __init__(self, email) -> None:
+        self.email = email
+
+    def auth_2fa_sms(self, code):
+        print(f"Verifying 2FA using SMS code: {code}")
+        self.verified = True
+
+    def pay(self, order: Order):
+        if not self.verified:
+            raise Exception("Not authenticated")
+        print("Processing PayPal payment...")
+        print(f"Verifying email: {self.email}.")
+        order.status = "paid"
+
+
+# Making orders
+order = Order()
+order.add_item("Head First Object Oriented Analysis and Design Book", 1, 76)
+order.add_item("Raspberry Pi Camera v2", 2, 40)
+
+print(order.total_price())
+
+
+# Payment using Debit Card
+
+debit_payment = DebitPaymentHandler("67891")
+debit_payment.auth_2fa_sms("54321")
+debit_payment.pay(order)
+
+print("#"*20)
+
+# Payment using Credit Card
+
+credit_payment = CreditPaymentHandler("97531")
+credit_payment.pay(order)
+```
+
+Output:
+```bash
+156
+Verifying 2FA using SMS code: 54321
+Processing Debit Card payment...
+Verifying code: 67891.
+####################
+Processing Credit Card payment...
+Verifying code: 97531.
+```
+
+
+...
