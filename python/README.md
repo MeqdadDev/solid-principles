@@ -487,7 +487,8 @@ Verifying code: 67891.
 
 #### Uncle Clean in the Scene
 
-Uncle Clean: Hello Abo Ehmaid (a nickname for Mohammad), I heard that you're securing your payment software, and that is a good news, but what will happen if the user start using credit card?
+Uncle Clean: Hello Abo Ehmaid (a nickname for Mohammad), I heard that you're securing your payment software, a good news!
+But what will happen if the user start using credit card?
 
 Mohammad: Hi uncle, I know that credit card doesn't support 2FA using SMS verification, so I added an exception for this error. But I think it should be implemented in a better way. What do you advise me to do?
 
@@ -611,5 +612,20 @@ Processing Credit Card payment...
 Verifying code: 97531.
 ```
 
+-------
 
-...
+### Composition over Inheritance
+
+<p align="center">
+<img src="assets/coi.jpg" width=40% height=30%>
+</p>
+
+***Note: Composition over Inheritance is not one of the SOLID principles, but it is worth mentioning in the story context because it is more efficient in this case.***
+
+#### Uncle Clean in the Scene
+
+Uncle Clean: Hi Mohammad, you did a good job by separating the interfaces.
+
+Mohammad: Thanks uncle, your follow up and advices for me are highly appreciated.
+
+Uncle Clean: What types of two-factor authentication (2FA) methods do you know?
