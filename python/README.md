@@ -1,5 +1,9 @@
 # SOLID Principles with Python
 
+<p align="center">
+<img src="assets/solid.jpg" width=40% height=30%>
+</p>
+
 Let's build a story! To see how to bring SOLID principles to life.
 
 ### The Beginning
@@ -8,7 +12,7 @@ Meet Mohammad, a smart person who wants to build a robust payment system.
 
 First of all, Mohammad thinks to create a class with different responsibilities from adding items, calculating prices to create verification process and payment using various types.
 
-Code Example:
+System initial code:
 ```python
 class Order:
     items = []
@@ -38,7 +42,6 @@ class Order:
             self.status = "paid"
         else:
             raise Exception(f"#### Unknown type: {payment_type}.")
-
 ```
 
 To use this class in code, Mohammad created this use case:
@@ -57,8 +60,7 @@ print(order.total_price())
 order.pay("debit", "123456789")
 ```
 
-The output was:
-
+Output:
 ```bash
 174
 Processing payment type...
@@ -82,7 +84,11 @@ Let's assume that "**Uncle Clean**", a consultant, is helping Mohammad implement
 
 -------
 
-### Single Responsibility Principle (SRP)
+### 1- Single Responsibility Principle (SRP)
+
+<p align="center">
+<img src="assets/srp.jpg" width=40% height=30%>
+</p>
 
 At this moment, Mohammad asks himself; "What are the responsibilities of `Order` class at my code?" He finds that the class have different responsibilities such as: adding items, calculating total price and payment details.
 
@@ -96,9 +102,6 @@ Uncle Clean:
 
 The SRP dictates that **classes should have only a single reason to change**. If your class contains multiple reasons for change; then it indicates that your code is tightly-coupled and harder to maintain.
 
-<p align="center">
-<img src="assets/srp.jpg" width=40% height=30%>
-</p>
 
 Uncle Clean:
 
@@ -168,8 +171,11 @@ Good job Mohammad, you're doing great, also you can do more work to optimize thi
 
 -------
 
-### Open/Closed Principle (OCP)
+### 2- Open/Closed Principle (OCP)
 
+<p align="center">
+<img src="assets/ocp.jpg" width=40% height=30%>
+</p>
 
 After some days, a new client approached Mohammad and inquired about the availability of PayPal payment support in his program. Mohammad responded by stating that this functionality could be easily incorporated.
 
@@ -184,10 +190,6 @@ Mohammad: What is OCP?
 Uncle Clean:
 
 OCP stands for **Open/Closed Principle (OCP)** which states that software entities (classes, functions, ...) should be **open for extension** but **closed for modification**. This means that when new requirements arise or changes need to be made, it should be possible to extend the behavior of the software entity without modifying its source code.
-
-<p align="center">
-<img src="assets/ocp.jpg" width=40% height=30%>
-</p>
 
 Now, after considering OCP into account, the new code became:
 
@@ -263,7 +265,11 @@ Verifying code: 543219876.
 
 -------
 
-### Liskov Substitution Principle (LSP)
+### 3- Liskov Substitution Principle (LSP)
+
+<p align="center">
+<img src="assets/lsp.jpg" width=40% height=30%>
+</p>
 
 Next day after adding PayPal payment integration, a customer called Mohammad and told him that there is a big issue in the system! Paying using PayPal method doesn't require security code! it requires email!
 
@@ -279,9 +285,6 @@ Uncle Clean:
 
 LSP is created by Prof. Barbara Liskov which stands for **Liskov Substitution Principle**, which states that objects of a superclass should be replaceable with objects of its subclasses without breaking the program's behavior.
 
-<p align="center">
-<img src="assets/lsp.jpg" width=40% height=30%>
-</p>
 
 The result of applying Liskov Substitution Principle on the codebase was:
 
@@ -368,7 +371,11 @@ Verifying email: hi@customer.com.
 
 -------
 
-### Interface Segregation Principle (ISP)
+### 4- Interface Segregation Principle (ISP)
+
+<p align="center">
+<img src="assets/isp.jpg" width=40% height=30%>
+</p>
 
 After a while, Mohammad contacted a cyber security expert to review the whole system and to submit a report that helps him to fix the vulnerabilities in the system for more protection.
 
@@ -481,9 +488,6 @@ Verifying 2FA using SMS code: 54321
 Processing Debit Card payment...
 Verifying code: 67891.
 ```
-<p align="center">
-<img src="assets/isp.jpg" width=40% height=30%>
-</p>
 
 #### Uncle Clean in the Scene
 
@@ -628,4 +632,126 @@ Uncle Clean: Hi Mohammad, you did a good job by separating the interfaces.
 
 Mohammad: Thanks uncle, your follow up and advices for me are highly appreciated.
 
-Uncle Clean: What types of two-factor authentication (2FA) methods do you know?
+Uncle Clean: Are you familiar with various types of two-factor authentication (2FA) methods?
+
+Mohammad: Yes, I am. I know different types, such as SMS-based, authenticator apps, Email-based, and more.
+
+Uncle Clean: That's great to hear! Now, let's say you encounter a situation where you need to incorporate multiple 2FA methods for the same payment method, like adding an authenticator app alongside SMS-based authentication for PayPal. How would you approach this? Additionally, do you believe that solely inheriting from the 2FA classes would be sufficient for your payment methods? I'm referring to the need for additional features to be added to your payment classes, beyond inheriting from the 2FA classes.
+
+Mohammad: Well, there are situations where I could create additional classes to inherit the necessary features for payment methods. However, I'm concerned about the long-term practicality if I keep adding more and more features. Uncle, I would like to hear your thoughts on this matter.
+
+Uncle Clean: In certain scenarios, employing inheritance may not be the most practical or efficient approach to transferring features from one class to another. In such cases, it is advisable to consider the principle of Composition over Inheritance (CoI) as a better alternative.
+
+Mohammad: In simple words, what do we mean by that?
+
+Uncle Clean: Composition over inheritance is a principle in OOP that suggests favoring composition, or building objects by combining simpler components, over inheritance, where objects inherit properties and behaviors from parent classes. With composition, we can combine smaller, modular components for greater flexibility and code reusability. It reduces tight coupling, avoids fragility, and improves code readability and maintainability. Embracing composition will result in more efficient and adaptable code.
+
+Mohammad: Interesting! I will do my best to apply that. Thanks uncle.
+
+After reviewing different examples, Mohammad changed his codebase to the following one: (_Added SMSAuthorizer and created an object in debit card class_)
+
+```python
+from abc import ABC, abstractmethod
+
+
+class Order:
+    items = []
+    quantities = []
+    prices = []
+    status = "open"
+
+    def add_item(self, name, quantity, price):
+        self.items.append(name)
+        self.quantities.append(quantity)
+        self.prices.append(price)
+
+    def total_price(self):
+        total = 0
+        for i in range(len(self.prices)):
+            total += self.quantities[i] * self.prices[i]
+        return total
+
+
+class SMSAuthorizer:
+
+    authorized = False
+
+    def verify_code(self, code):
+        print(f"Verifying code {code}")
+        self.authorized = True
+
+    def is_authorized(self):
+        return self.authorized
+
+
+class PaymentHandler(ABC):
+    @abstractmethod
+    def pay(self, order: Order):
+        pass
+
+
+class DebitPaymentHandler(PaymentHandler):
+    def __init__(self, security_code, authorizer: SMSAuthorizer):
+        self.authorizer = authorizer
+        self.security_code = security_code
+
+    def pay(self, order: Order):
+        if not self.authorizer.is_authorized():
+            raise Exception("Not authenticated")
+        print("Processing Debit Card payment...")
+        print(f"Verifying code: {self.security_code}.")
+        order.status = "paid"
+
+
+class CreditPaymentHandler(PaymentHandler):
+    def __init__(self, security_code):
+        self.security_code = security_code
+
+    def pay(self, order: Order):
+        print("Processing Credit Card payment...")
+        print(f"Verifying code: {self.security_code}.")
+        order.status = "paid"
+
+
+class PayPalPaymentHandler(PaymentHandler):
+    def __init__(self, email, authorizer: SMSAuthorizer) -> None:
+        self.authorizer = authorizer
+        self.email = email
+
+    def pay(self, order: Order):
+        if not self.authorizer.is_authorized():
+            raise Exception("Not authenticated")
+        print("Processing PayPal payment...")
+        print(f"Verifying email: {self.email}.")
+        order.status = "paid"
+
+
+# Making orders
+order = Order()
+order.add_item("Head First Object Oriented Analysis and Design Book", 1, 76)
+order.add_item("Raspberry Pi Camera v2", 2, 40)
+
+print(order.total_price())
+
+
+# SMS Authorizer
+sms_authorizer = SMSAuthorizer()
+
+# Payment using Debit Card
+
+debit_payment = DebitPaymentHandler("67891", sms_authorizer)
+sms_authorizer.verify_code("24682")
+debit_payment.pay(order)
+```
+
+Output:
+```bash
+156
+Verifying code 24682
+Processing Debit Card payment...
+Verifying code: 67891.
+```
+
+-------
+
+### 5- Dependency Inversion Principle (DIP)
