@@ -4,13 +4,14 @@
 <img src="assets/solid.jpg" width=40% height=30%>
 </p>
 
-Let's build a story! To see how to bring SOLID principles to life.
+To explore how to apply SOLID principles in practice, let's create a story.
+
 
 ### The Beginning
 
 Meet Mohammad, a smart person who wants to build a robust payment system.
 
-First of all, Mohammad thinks to create a class with different responsibilities from adding items, calculating prices to create verification process and payment using various types.
+First of all, Mohammad plans to create a class that has multiple responsibilities, such as adding items, calculating prices, creating a verification process, and accepting payments using different methods.
 
 System initial code:
 ```python
@@ -67,7 +68,7 @@ Processing payment type...
 Verifying code: 123456789.
 ```
 
-Everything works fine and it's OK for now.
+Everything works fine and Mohammad was satisfied for now.
 
 -------
 
@@ -90,7 +91,7 @@ Let's assume that "**Uncle Clean**", a consultant, is helping Mohammad implement
 <img src="assets/srp.jpg" width=40% height=30%>
 </p>
 
-At this moment, Mohammad asks himself; "What are the responsibilities of `Order` class at my code?" He finds that the class have different responsibilities such as: adding items, calculating total price and payment details.
+Mohammad has asked himself about the responsibilities of the `Order` class in his code and has identified that it has multiple responsibilities, including adding items, calculating the total price, and handling payment details.
 
 #### Uncle Clean in the Scene
 
@@ -98,14 +99,11 @@ Uncle Clean: Hi Mohammad, did you hear about SRP?
 
 Mohammad: No, what is SRP?
 
-Uncle Clean:
+Uncle Clean: The SRP (stands for Single Responsibility Principle) dictates that **classes should have only a single reason to change**. If your class contains multiple reasons for change; then it indicates that your code is tightly-coupled and harder to maintain.
 
-The SRP dictates that **classes should have only a single reason to change**. If your class contains multiple reasons for change; then it indicates that your code is tightly-coupled and harder to maintain.
+Mohammad: What that means in my case?
 
-
-Uncle Clean:
-
-What if a new customer came to you and asked for a new payment method like Bitcoin? PayPal? Then you need to change the `Order` class!. I suggest on you to split the payment responsibility out of `Order` class.
+Uncle Clean: What if a new customer requests a new payment method, such as Bitcoin or PayPal? In that case, you would need to modify the `Order` class. Therefore, it is recommended to separate the payment responsibility from the `Order` class.
 
 After this advice, Mohammad changed his code to the following one:
 
@@ -163,9 +161,7 @@ Processing Credit Card payment...
 Verifying code: 543219876.
 ```
 
-Uncle Clean:
-
-Good job Mohammad, you're doing great, also you can do more work to optimize this code such as creating a special method for changing the status of order and more. But this is fine for now.
+Uncle Clean: Great job, Mohammad! You're doing well. There is still room for optimization, such as creating a specific method for changing the order status, but for now, this is sufficient.
 
 [For more details about SRP, take a look on Uncle Bob's blog from [here](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html)]
 
@@ -177,7 +173,8 @@ Good job Mohammad, you're doing great, also you can do more work to optimize thi
 <img src="assets/ocp.jpg" width=40% height=30%>
 </p>
 
-After some days, a new client approached Mohammad and inquired about the availability of PayPal payment support in his program. Mohammad responded by stating that this functionality could be easily incorporated.
+After a few days, a new client asked Mohammad if his program supported PayPal payments. Mohammad replied that this feature could be easily added.
+
 
 To achieve that, Mohammad created a new method for PayPal, but he made a mistake while calling it, he used `pay_debit` instead of using `pay_PayPal`. Mohammad encountered additional comparable issues, which led him to realize that he was frequently modifying the `PaymentHandler` class each time a new payment feature was introduced.
 
@@ -187,9 +184,7 @@ Uncle Clean: Hi Mohammad, After reviewing your recent difficulties when attempti
 
 Mohammad: What is OCP?
 
-Uncle Clean:
-
-OCP stands for **Open/Closed Principle (OCP)** which states that software entities (classes, functions, ...) should be **open for extension** but **closed for modification**. This means that when new requirements arise or changes need to be made, it should be possible to extend the behavior of the software entity without modifying its source code.
+Uncle Clean: OCP stands for **Open/Closed Principle (OCP)** which states that software entities (classes, functions, ...) should be **open for extension** but **closed for modification**. This means that when new requirements arise or changes need to be made, it should be possible to extend the behavior of the software entity without modifying its source code.
 
 Now, after considering OCP into account, the new code became:
 
@@ -271,9 +266,10 @@ Verifying code: 543219876.
 <img src="assets/lsp.jpg" width=40% height=30%>
 </p>
 
-Next day after adding PayPal payment integration, a customer called Mohammad and told him that there is a big issue in the system! Paying using PayPal method doesn't require security code! it requires email!
+Next day after adding PayPal payment integration, a customer called Mohammad and told him that there is a big issue in the system! To pay using PayPal, you don't need a security code. Instead, you only need to provide your email address.
 
-Mohammad start thinking about changing the `security_code` to `email`, BUT... Changing this to `email` will create a new problem with other payment methods which require `security_code`.
+Mohammad considered changing the `security_code` to `email`, but this would create a new problem with other payment methods that require a `security_code`.
+
 
 #### Uncle Clean in the Scene
 
@@ -648,6 +644,8 @@ Uncle Clean: Composition over inheritance is a principle in OOP that suggests fa
 
 Mohammad: Interesting! I will do my best to apply that. Thanks uncle.
 
+Uncle Clean: Habibi teslam. (a greeting word in Arabic)
+
 After reviewing different examples, Mohammad changed his codebase to the following one: (_Added SMSAuthorizer and created an object in debit card class_)
 
 ```python
@@ -756,13 +754,19 @@ Verifying code: 67891.
 
 ### 5- Dependency Inversion Principle (DIP)
 
+<p align="center">
+<img src="assets/dip.jpg" width=40% height=30%>
+</p>
+
 At this point, Mohammad was smart enough to read about DIP principle 🤣, where he called uncle Clean and introduced DIP for him.
+
+#### Uncle Clean in the Scene
 
 Mohammad: Hi uncle, I want to know that I worked on DIP during last week.
 
 Uncle Clean: What do you mean by DIP?
 
-Mohammad: I can't imagine that, I am explaining a tech topic for uncle Clean!
+Mohammad: I can't imagine that, I am explaining a tech topic for uncle Clean! 😊
 
 Anyway, DIP stands for the Dependency Inversion Principle. The principle is about removing dependencies from high-level code to low-level code by creating interfaces, such as `Authorizer` in my case. As a result, both high-level and low-level code depend on these interfaces.
 
@@ -991,7 +995,7 @@ Output:
 ```bash
 267
 Verifying reCAPTCHA User Selections: 1,4,7
-User passed `I'm not a robot' test
+User passed `I'm not a robot` test
 Processing PayPal payment...
 Verifying email: hi@customer.com.
 ```
