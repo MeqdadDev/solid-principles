@@ -756,7 +756,20 @@ Verifying code: 67891.
 
 ### 5- Dependency Inversion Principle (DIP)
 
-Creating a base class for authorization process:
+At this point, Mohammad was smart enough to read about DIP principle 🤣, where he called uncle Clean and introduced DIP for him.
+
+Mohammad: Hi uncle, I want to know that I worked on DIP during last week.
+
+Uncle Clean: What do you mean by DIP?
+
+Mohammad: I can't imagine that, I am explaining a tech topic for uncle Clean!
+
+Anyway, DIP stands for the Dependency Inversion Principle. The principle is about removing dependencies from high-level code to low-level code by creating interfaces, such as `Authorizer` in my case. As a result, both high-level and low-level code depend on these interfaces.
+
+Uncle Clean: Great job Mohammad, you're amazing. Based on that, what you've changed in your code?
+
+Mohammad: I created `Authorizer`, where I pass it to the suitable payment methods, and this gives me the ability to pass different authorization types if they are subclasses from the `Authorizer` interface. Here is the code below:
+
 ```python
 from abc import ABC, abstractmethod
 
@@ -857,7 +870,9 @@ sms_authorizer.verify_code("24682")
 debit_payment.pay(order)
 ```
 
-What if we want to add a reCAPTCHA authentication method?
+Uncle Clean: Wow, that is a great progress. What if we want to add a reCAPTCHA authentication method? Can the Dependency Inversion Principle be helpful here?
+
+Mohammad: Sure, I added that to my code, where I created a concrete class `reCAPTCHA_Authorizer` from `Authorizer` abstract class, and I passed it to PayPal payment class. So now I can use different authorization and authentication methods to the same payment method class. Look at this code below:
 
 ```python
 from abc import ABC, abstractmethod
@@ -893,7 +908,7 @@ class reCAPTCHA_Authorizer(Authorizer):
 
     def verify_reCAPTCHA(self, user_selections):
         print(f"Verifying reCAPTCHA {user_selections}")
-        print("User passed `I'm not a robot' test")
+        print("User passed `I'm not a robot` test")
         self.authorized = True
 
     def is_authorized(self):
@@ -980,3 +995,14 @@ User passed `I'm not a robot' test
 Processing PayPal payment...
 Verifying email: hi@customer.com.
 ```
+
+
+-------
+
+### Final Thoughts
+
+Firstly, I want to thank my characters in the story, Mohammad and uncle Clean.
+
+Secondly, SOLID principles are here to make software more maintainable, testable, scalable and reusable. However, SOLID principles are not always applicable in every situation. Try to embrace the soul that is behind SOLID rules. 😊
+
+Finally, thanks for reading and happy coding.
